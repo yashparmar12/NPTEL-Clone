@@ -4,8 +4,18 @@ import { ChevronRight, ChevronDown } from "lucide-react";
 import Navbar from "../../home/Navbar";
 import localChapter from "/src/assets/localChapterImg.png";
 import { useEffect, useState } from "react";
+import Testimonials from "./Testimonials";
 
 const LocalChapter = () => {
+  interface TestimonialCards {
+    name: string
+    image: string
+    college: string
+    description: string
+  }
+
+  const [TestimonialsCardData, setTestimonialsCardData] = useState<TestimonialCards[]>([]);
+
   const [hash, setHashData] = useState<string>(window.location.hash);
   const [hashIdData, setHashIdData] = useState<string>("");
   const [videoOpen, setIsVideoOpen] = useState<{
@@ -23,10 +33,35 @@ const LocalChapter = () => {
       [video]: !prev[video],
     }));
   };
+  
+  const GetTestimonials = async () => {
+    try {
+      const response = await fetch("http://localhost:8000/NPTEL/getTestimonials",{
+        method:"GET",
+        headers:{
+          "Content-type":"application/json"
+        }
+      });
+      const data = await response.json();
+     
+      if(!data){
+        console.log("Not Able to fetch Data");
+      }
+      setTestimonialsCardData(data.testimonialsData);
+
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   useEffect(() => {
+
+    GetTestimonials();
     const handleHashChange = () => {
       setHashIdData(window.location.hash);
+
+      console.log(window.location.hash);
+
       const currentHash = window.location.hash;
       if (currentHash === "#background" || currentHash === "#semester") {
         setHashData("Local Chapters - Home");
@@ -43,7 +78,14 @@ const LocalChapter = () => {
         setHashData("Engage with NPTEL");
       } else if (currentHash === "#ansys") {
         setHashData("Certification courses offered by Industry");
+      }else{
+        setHashData(currentHash);
       }
+      
+      const ID = currentHash.substring(1);
+     
+      const getID = document.getElementById(ID);
+      getID?.scrollIntoView({ behavior: "smooth" });
     };
 
     handleHashChange();
@@ -154,20 +196,20 @@ const LocalChapter = () => {
                 </h3>
                 <ul className="list-disc pl-5 mt-6">
                   <li>
-                    <Link
-                      to="#ansys"
+                    <a
+                      href="#ansys"
                       className="block text-gray-600 hover:text-gray-900 mt-4"
                     >
                       Ansys
-                    </Link>
+                    </a>
                   </li>
                   <li>
-                    <Link
-                      to="#microsoft"
+                    <a
+                      href="#microsoft"
                       className="block text-gray-600 hover:text-gray-900 mt-4"
                     >
                       MICROSOFT
-                    </Link>
+                    </a>
                   </li>
                 </ul>
               </div>
@@ -630,11 +672,12 @@ const LocalChapter = () => {
             ) : hashIdData === "#ansys" ? (
               <div>
                 <div
+                  id="ansys"
                   className="max-w-4xl mx-auto p-6"
                   // className="max-w-4xl mx-auto p-6"
                   style={{ marginLeft: "-20px", marginTop: "-93%" }}
                 >
-                  <section id="join">
+                  <section >
                     <h1
                       className="text-2xl font-semibold mb-3"
                       style={{ marginTop: "-30px" }}
@@ -687,7 +730,10 @@ const LocalChapter = () => {
                         </div>
 
                         <div>
-                          <h5 style={{ fontSize: "18px", fontWeight: "600" }}>
+                          <h5
+                            className="mt-5"
+                            style={{ fontSize: "18px", fontWeight: "600" }}
+                          >
                             Product and benefits:
                           </h5>
                           <ol className="list-decimal ml-6 mt-3">
@@ -713,95 +759,163 @@ const LocalChapter = () => {
                             </li>
                           </ol>
                         </div>
+
+                        <div>
+                          <h5
+                            className="mt-5"
+                            style={{ fontSize: "18px", fontWeight: "600" }}
+                          >
+                            How to Earn free digital badge:
+                          </h5>
+                          <ol className="list-decimal ml-6 mt-3">
+                            <li
+                              className="text-gray-900"
+                              style={{ fontFamily: "sans-serif" }}
+                            >
+                              Once the coupon is received students need to
+                              visit:{" "}
+                              <a
+                                className="text-blue-500"
+                                href="https://innovationspace.ansys.com/courses/learning-tracks/"
+                              >
+                                Ansys Learning Tracks
+                              </a>
+                            </li>
+                            <li
+                              className="text-gray-900"
+                              style={{ fontFamily: "sans-serif" }}
+                            >
+                              Select the designated track from available
+                              Learning Tracks.
+                            </li>
+                            <li style={{ fontFamily: "sans-serif" }}>
+                              Complete all the courses associated with the track
+                              along with the quiz.
+                            </li>
+                            <li style={{ fontFamily: "sans-serif" }}>
+                              Click on the Buy Badge option on the Learning
+                              Track page.
+                            </li>
+                            <li style={{ fontFamily: "sans-serif" }}>
+                              Complete the transaction by entering the coupon
+                              code provided.
+                            </li>
+                          </ol>
+                        </div>
+                        <div>
+                          <h5
+                            className="mt-5"
+                            style={{ fontSize: "18px", fontWeight: "600" }}
+                          >
+                            Recognition by posting on professional network:
+                          </h5>
+
+                          <ol className="list-decimal ml-6 mt-3">
+                            <li
+                              className="text-gray-900"
+                              style={{ fontFamily: "sans-serif" }}
+                            >
+                              Leverage the workflow to post the digital badge on
+                              professional network.{" "}
+                            </li>
+                            <li
+                              className="text-gray-900"
+                              style={{ fontFamily: "sans-serif" }}
+                            >
+                              Tag the Ansys Learning page on LinkedIn when
+                              posting for a chance to win a prize.{" "}
+                            </li>
+                          </ol>
+                        </div>
+
+                        <div>
+                          <h1
+                            className="mt-5"
+                            style={{ fontSize: "26px", fontWeight: "600" }}
+                          >
+                            Ansys Innovation Courses are:
+                          </h1>
+
+                          <ol className="list-decimal ml-6 mt-3">
+                            <li
+                              className="text-gray-900"
+                              style={{ fontFamily: "sans-serif" }}
+                            >
+                              Comprehensive self-paced courses including modular
+                              video lectures, reference handouts for learners to
+                              watch, read at their own pace and get assessed
+                              with quiz.
+                            </li>
+                            <li
+                              className="text-gray-900"
+                              style={{ fontFamily: "sans-serif" }}
+                            >
+                              An opportunity for hands-on learning with free
+                              workshops using free Ansys student software
+                              allowing students to gain practical experience
+                              with industry-leading simulation tools.
+                            </li>
+                            <li
+                              className="text-gray-900"
+                              style={{ fontFamily: "sans-serif" }}
+                            >
+                              Organized into curated Learning Tracks so courses
+                              can be taken in order to build upon learnings in a
+                              specific area.{" "}
+                            </li>
+                            <li
+                              className="text-gray-900"
+                              style={{ fontFamily: "sans-serif" }}
+                            >
+                              Preparation tools for Ansys Certification which is
+                              a recognized digital certification based on theory
+                              and simulation quiz.{" "}
+                            </li>
+                            <li
+                              className="text-gray-900"
+                              style={{ fontFamily: "sans-serif" }}
+                            >
+                              Supported via the Ansys Learning Forum enabling
+                              users to ask questions and get answers from
+                              experts.
+                            </li>
+                          </ol>
+                        </div>
                       </div>
-
-                      <Link
-                        to="https://drive.google.com/file/u/0/d/1jaSJTmUgp3-VbTMbH0iHmrYzygYsDNvR/view?usp=sharing&pli=1"
-                        className="block group"
-                      >
-                        <div className="relative bg-gray-50 rounded-lg p-6 hover:bg-gray-100 transition-colors">
-                          <div className="absolute left-0 top-0 bottom-0 w-1 bg-gray-600 rounded-l-lg" />
-                          <h2 className="text-lg text-gray-700 group-hover:text-gray-900">
-                            Booklet about NPTEL
-                          </h2>
-                        </div>
-                      </Link>
                     </div>
-                    <div className="mt-6 space-y-3 text-gray-600"></div>
-                  </section>
-
-                  <section id="spoc">
-                    <h1 className="text-2xl font-semibold mb-5 mt-8">
-                      Existing SPOC
+                    <div className="space-y-6" style={{ width: "140%" }}>
+                    <h1
+                      className="text-gray-900 mt-8 mb-5"
+                      style={{ fontSize: "26px", fontWeight: "600" }}
+                      >
+                      Sample Certificate and Badge
                     </h1>
-                    <div className="space-y-6" style={{ width: "140%" }}>
-                      <Link
-                        to="https://docs.google.com/forms/d/e/1FAIpQLSelb1X2yjubsDFv2NhVQ9mokrg6kZc342larzUD39uIdG0dTw/viewform"
-                        className="block group"
-                      >
-                        <div className="relative bg-gray-50 rounded-lg p-6 hover:bg-gray-100 transition-colors">
-                          <div className="absolute left-0 top-0 bottom-0 w-1 bg-gray-600 rounded-l-lg" />
-                          <h2 className="text-lg text-gray-700 group-hover:text-gray-900">
-                            Change request for LC details
-                          </h2>
-                        </div>
-                      </Link>
-                      <Link to="/course-list" className="block group">
-                        <div className="relative bg-gray-50 rounded-lg p-6 hover:bg-gray-100 transition-colors">
-                          <div className="absolute left-0 top-0 bottom-0 w-1 bg-gray-600 rounded-l-lg" />
-                          <h2 className="text-lg text-gray-700 group-hover:text-gray-900">
-                            Local Chapter Ratings
-                          </h2>
-                        </div>
-                      </Link>
+                      <div>
+                        <img
+                          src="https://nptel.ac.in/assets/LC%20page/cert.png"
+                          alt="Ansys Innovation Courses"
+                          className="object-cover"
+                          style={{width:"60%", marginLeft:"15%"}}
+                        />
+                      </div>
+                      <h1 className="text-gray-800 mt-8 mb-5"
+                      style={{ fontSize: "26px", fontWeight: "400" }}>Testimonials from NPTEL Toppers who have availed Free Ansys Track Completion Badge</h1>
+                    </div>
+                    <div style={{marginRight:"-30%"}}>
+                    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3" >
+                    {/* <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 p-4"> */}
+                      {TestimonialsCardData && TestimonialsCardData.map((item, index) => (
+                        <Testimonials Data={[item]} key={index} />
+                      ))}
+                    </div>
                     </div>
                   </section>
-
-                  <section id="for-lc">
-                    <h1 className="text-2xl font-semibold mb-5 mt-8">For LC</h1>
-                    <div className="space-y-6" style={{ width: "140%" }}>
-                      <Link
-                        to="https://docs.google.com/forms/d/e/1FAIpQLSdoQWbxTUl2J8pp8dbBMkus547j3SU8WEwVDSDz5_oqrrLKsg/closedform"
-                        className="block group"
-                      >
-                        <div className="relative bg-gray-50 rounded-lg p-6 hover:bg-gray-100 transition-colors">
-                          <div className="absolute left-0 top-0 bottom-0 w-1 bg-gray-600 rounded-l-lg" />
-                          <h2 className="text-lg text-gray-700 group-hover:text-gray-900">
-                            Support a SPOC for a conference
-                          </h2>
-                        </div>
-                      </Link>
-                      <Link to="/course-list" className="block group">
-                        <div className="relative bg-gray-50 rounded-lg p-6 hover:bg-gray-100 transition-colors">
-                          <div className="absolute left-0 top-0 bottom-0 w-1 bg-gray-600 rounded-l-lg" />
-                          <h2 className="text-lg text-gray-700 group-hover:text-gray-900">
-                            Internships for toppers in cources with faculty
-                          </h2>
-                        </div>
-                      </Link>
-                    </div>
-                  </section>
-
-                  {/* Contact Information */}
-                  <div className="mt-12 space-y-3 text-gray-600">
-                    <p>
-                      If you have any queries, please write to us at{" "}
-                      <a
-                        href="mailto:localchapter@nptel.iitm.ac.in"
-                        className="text-blue-600 hover:underline"
-                      >
-                        localchapter@nptel.iitm.ac.in
-                      </a>
-                    </p>
-                    <p>
-                      LC helpline mobile number : 7200043633 (Mon-Fri 9am-6pm)
-                    </p>
-                  </div>
                 </div>
               </div>
             ) : null}
           </div>
 
+          {/* Footer Section */}
           <div>
             <footer className="bg-white py-8 px-4 sm:px-6 lg:px-8">
               <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-12">
