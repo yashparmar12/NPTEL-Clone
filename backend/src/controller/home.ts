@@ -1,4 +1,4 @@
-import { getHomeData, saveHomeData, saveTestimonials,TogetTestimonials } from "../service/homeService";
+import { getHomeData, saveHomeData, saveTestimonials,TogetTestimonials, postCollegeListDetails, getCollegeListDetails, getCollegeListDetailsBySearch, paginationService } from "../service/homeService";
 import { Request, Response } from "express";
 import express from "express";
 const router = express.Router();
@@ -92,6 +92,7 @@ router.route("/postTestimonials").post(async (req: Request, res: Response) => {
   }
 });
 
+
 router.route("/getTestimonials").get(async (req: Request, res: Response) => {
   try {
       const data = await TogetTestimonials();
@@ -102,12 +103,7 @@ router.route("/getTestimonials").get(async (req: Request, res: Response) => {
         });
       }
 
-    if (!data) {
-      res.status(400).json({
-        message: "Not able to save data",
-        success: false,
-      });
-    }
+   
 
     res.status(201).json({
       message: "Home Page Created",
@@ -118,5 +114,108 @@ router.route("/getTestimonials").get(async (req: Request, res: Response) => {
     console.log(error);
   }
 });
+
+interface CollegeList {
+  CollegeName:string;
+  LCId:string;
+  State:string;
+  Address:string;
+  SPOCName:string;
+  CoordinatedBy:string;
+}
+
+router.route("/postCollegeList").post(async (req: Request, res: Response) => {
+  try {
+    const data:CollegeList[] = req.body;
+    if (!data || data.length === 0) {
+      res.status(400).json({
+        message: "No data found",
+        success: false,
+      });
+    }
+      
+    const resData = await postCollegeListDetails(data);
+
+    if (!resData || resData.length === 0) {
+      res.status(400).json({
+        message: "No able to save data",
+        success: false,
+      });
+    }
+   
+    res.status(201).json({
+      message: "Home Page Created",
+      success: true,
+      clgList: resData,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+});
+// interface CollegeListDetails {
+//   listDetail: CollegeList[];
+//   len: number;
+// }
+router.route("/getCollegeList").get(async (req: Request, res: Response) => {
+  try {
+    const entryPErPage = parseInt(req.query.page as string);
+    const detail = await getCollegeListDetails(entryPErPage);
+    if (!detail || detail.listDetail.length === 0) {
+      res.status(400).json({
+        message: "No data found",
+        success: false,
+      });
+      return ;
+    }
+   
+    res.status(200).json({
+      message: "College List Fetched Successfully",
+      success: true,
+      clgList: detail,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+});
+router.route("/searchCollegeDetails").post(async (req: Request, res: Response):Promise<void> => {
+  try {
+    const searchVal:string = req.body.searchInput;
+
+    const data = await getCollegeListDetailsBySearch(searchVal);
+    // if (!data || data.length === 0) {
+    //    res.status(400).json({
+    //     message: "No data found",
+    //     success: false,
+    //   });
+    //    return;
+    // }
+   
+    res.status(200).json({
+      message: "College List Fetched Successfully",
+      success: true,
+      clgList: data,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Internal Server Error", success: false });
+  }
+});
+
+router.route("/getPageCollegeList").get(async (req: Request, res: Response):Promise<void> => {
+  try {
+    const pageNumber = parseInt(req.query.page as string);
+    const result = await paginationService(pageNumber);
+    
+
+    res.status(200).json({
+      message: "College List Fetched Successfully",
+      success: true,
+      clgList: result,
+    });
+
+  } catch (error) {
+    console.log(error)
+  }
+})
 
 export default router;

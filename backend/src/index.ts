@@ -24,5 +24,5 @@ app.use('/NPTEL', router);
 
 app.listen(port, () => {
     DB();
-    console.log(`Server running at :${port}`);
+    console.log(`Server running at ${port}`);
 });

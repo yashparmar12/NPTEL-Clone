@@ -1,6 +1,7 @@
 import { createBrowserRouter, RouterProvider} from "react-router-dom";
 import HomePage from './components/home/HomePage';
 import LocalChapter from "./components/InitiativesNavSection/LocalChapterSection/LocalChapter";
+import LcCollegeList from "./components/InitiativesNavSection/LocalChapterSection/LcCollegeList";
 // import './App.css'
 
 
@@ -77,6 +78,13 @@ const router = createBrowserRouter([
     path: "/localchapter",
     element: <LocalChapter />,
   },
+
+  //Local Home = LC College List
+  {
+    path: "/LcCollegeList",
+    element: <LcCollegeList />,
+  },
+ 
   
 ],
 

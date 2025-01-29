@@ -5,14 +5,27 @@ import Navbar from "../../home/Navbar";
 import localChapter from "/src/assets/localChapterImg.png";
 import { useEffect, useState } from "react";
 import Testimonials from "./Testimonials";
+import CertificationMicrosoft from "./CertificationMicrosoft";
+import CreditTransfer from "./CreditTransfer";
+
+interface TestimonialCards {
+  name: string
+  image: string
+  college: string
+  description: string
+}
+
+interface ForActive {
+  isClicked: boolean;
+  headingVal: string;
+} 
 
 const LocalChapter = () => {
-  interface TestimonialCards {
-    name: string
-    image: string
-    college: string
-    description: string
-  }
+  
+   const [isActive, setIsActive] = useState<ForActive>({
+      isClicked: false,
+      headingVal: "",
+    });
 
   const [TestimonialsCardData, setTestimonialsCardData] = useState<TestimonialCards[]>([]);
 
@@ -54,6 +67,13 @@ const LocalChapter = () => {
     }
   }
 
+  const handleActive = (heading: string) => {
+    setIsActive({
+      isClicked: true,
+      headingVal: heading,
+    });
+  }
+
   useEffect(() => {
 
     GetTestimonials();
@@ -76,11 +96,16 @@ const LocalChapter = () => {
         ].includes(currentHash)
       ) {
         setHashData("Engage with NPTEL");
-      } else if (currentHash === "#ansys") {
+      } else if (currentHash === "#ansys" || currentHash === "#microsoft") {
         setHashData("Certification courses offered by Industry");
       }else{
         setHashData(currentHash);
       }
+
+      setIsActive({
+        isClicked: false,
+        headingVal: "",
+      })
       
       const ID = currentHash.substring(1);
      
@@ -215,10 +240,15 @@ const LocalChapter = () => {
               </div>
 
               <div className="pt-4">
+                <Link to={"/LcCollegeList"}>
                 <h3 className="text-lg font-semibold mb-2">LC College List</h3>
+                </Link>
               </div>
               <div className="pt-4">
+                <h3 onClick={()=>handleActive("Credit Transfer")} className="text-lg font-semibold mb-2">Credit Transfer</h3>
+                {/* <Link to={"/creditTransfer"}>
                 <h3 className="text-lg font-semibold mb-2">Credit Transfer</h3>
+                </Link> */}
               </div>
               <div className="pt-4">
                 <h3 className="text-lg font-semibold mb-2">FDP</h3>
@@ -248,11 +278,17 @@ const LocalChapter = () => {
                 <ChevronRight className="h-4 w-4" />
                 <span>Local Chapter</span>
               </div>
+
+              {isActive.isClicked ? 
               <h1 className="text-3xl font-semibold">
+                {isActive.headingVal}
+              </h1> 
+              : <h1 className="text-3xl font-semibold">
                 {hash === "" ? "Local Chapters - Home" : hash}
-              </h1>
+              </h1>}
             </div>
           </header>
+
 
           <div className="container p-6">
             <div
@@ -274,7 +310,7 @@ const LocalChapter = () => {
               <div className="aspect-video relative rounded-lg overflow-hidden"></div>
             </div>
 
-            {hashIdData === "" ||
+            {isActive.isClicked ? <CreditTransfer/> : hashIdData === "" ||
             hashIdData === "#background" ||
             hashIdData === "#semester" ? (
               <div>
@@ -912,7 +948,7 @@ const LocalChapter = () => {
                   </section>
                 </div>
               </div>
-            ) : null}
+            ) : hashIdData === "#microsoft" ? <CertificationMicrosoft/> : null}
           </div>
 
           {/* Footer Section */}
